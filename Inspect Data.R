@@ -9,15 +9,23 @@ spending
 ### https://www.r-bloggers.com/2013/08/date-formats-in-r/#:~:text=Date%20Formats%20in%20R%201%20Importing%20Dates%20Dates,Correct%20Centuries%20...%204%20Date%20Formats%205%20References
 ### %d = day of month, %y = 2 digit year, %Y = 4 digit year, %b = abbreviated month e.g. May, JUL, %B = full month e.g. May, July
 
-spending %>%
+spendData <- spending %>%
     mutate(Date=as.Date(Date, format="%d %b %y")) %>%
     select(   Date
             , Amount
             , 'Account Number'
             , 'Transaction Type'
             , 'Transaction Details'
-            , 'Category'
+            , Category
             , 'Merchant Name')
 
+categorySummary <- spendData %>%
+      group_by(Category) %>%
+      summarise( averageSpend = mean(Amount)
+                ,totalSpend = sum(Amount) ) %>%
+      mutate(  averageSpend = formatC(averageSpend,format = "f", big.mark=",", digits=2)
+             , totalSpend = formatC(totalSpend,format = "f", big.mark=",", digits=2)
+             )
 
 
+view(categorySummary)
